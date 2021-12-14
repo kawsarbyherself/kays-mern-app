@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
+const {Schema,model} = require ('mongoose');
 
-const postSchema = mongoose.Schema({
+const postSchema = new Schema({
     title: String,
     message: String,
-    creator: String,
+    creator: String, 
     tags: [String],
     selectedFile: String,
     likeCount: {
@@ -16,6 +16,6 @@ const postSchema = mongoose.Schema({
     },
 })
 
-var PostMessage = mongoose.model('PostMessage', postSchema);
+var PostMessage = model('PostMessage', postSchema);
 
-export default PostMessage;
+module.exports = PostMessage;

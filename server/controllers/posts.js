@@ -1,70 +1,80 @@
-import express from 'express';
-import mongoose from 'mongoose';
+const { response } = require('express');
+const mongoose = require('mongoose');
 
-import PostMessage from '../models/postMessage.js';
+const PostMessage = require ('../models/postMessage.js');
 
-const router = express.Router();
-
-export const getPosts = async (req, res) => { 
+const postcontroller = {
+ 
+   async getPosts (req, res) { 
     try {
-        const postMessages = await PostMessage.find();
+   const postMessages = await PostMessage.find();
                 
-        res.status(200).json(postMessages);
+       res.status(200).json(postMessages);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
-}
+}, 
+//getPosts (req, res ) {
+    //PostMessage.find().then((dbpostdata) => {
+        //return res.json (dbpostdata);
+    //})
+//},
 
-export const getPost = async (req, res) => { 
+async getPost  (req, res) { 
     const { id } = req.params;
 
     try {
-        const post = await PostMessage.findById(id);
+      const post = await PostMessage.findById(id);
         
         res.status(200).json(post);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
-}
+},
 
-export const createPost = async (req, res) => {
-    const { title, message, selectedFile, creator, tags } = req.body;
+//async createPost (req, res) {
+    //onst { title, message, selectedFile, creator, tags } = req.body;
 
-    const newPostMessage = new PostMessage({ title, message, selectedFile, creator, tags })
+    //const newPostMessage = new PostMessage( title, message, selectedFile, creator, tags)
 
-    try {
-        await newPostMessage.save();
+    //try {
+        //await newPostMessage.save();
 
-        res.status(201).json(newPostMessage );
-    } catch (error) {
-        res.status(409).json({ message: error.message });
-    }
-}
+        //res.status(201).json(newPostMessage );
+    //} catch (error) {
+      // res.status(409).json({ message: error.message });
+    //}
+//},
+createPost(req, res ) {
+    PostMessage.create(req.body).then((dbpostdata)=> {
+        res.json(dbpostdata)
+    })
+},
 
-export const updatePost = async (req, res) => {
-    const { id } = req.params;
-    const { title, message, creator, selectedFile, tags } = req.body;
+
+async updatePost (req, res) {
+  const { id } = req.params;
+     const { title, message, creator, selectedFile, tags } = req.body;
     
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
 
-    const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+ const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
 
     await PostMessage.findByIdAndUpdate(id, updatedPost, { new: true });
 
     res.json(updatedPost);
-}
-
-export const deletePost = async (req, res) => {
-    const { id } = req.params;
+},
+async deletePost  (req, res)  {
+   const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
 
     await PostMessage.findByIdAndRemove(id);
 
     res.json({ message: "Post deleted successfully." });
-}
+},
 
-export const likePost = async (req, res) => {
+ async likePost (req, res) {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
@@ -74,7 +84,7 @@ export const likePost = async (req, res) => {
     const updatedPost = await PostMessage.findByIdAndUpdate(id, { likeCount: post.likeCount + 1 }, { new: true });
     
     res.json(updatedPost);
+},
+
 }
-
-
-export default router;
+module.exports = postcontroller;
