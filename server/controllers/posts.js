@@ -33,7 +33,7 @@ async getPost  (req, res) {
 },
 
 //async createPost (req, res) {
-    //onst { title, message, selectedFile, creator, tags } = req.body;
+    //const { title, message, selectedFile, creator, tags } = req.body;
 
     //const newPostMessage = new PostMessage( title, message, selectedFile, creator, tags)
 
@@ -42,13 +42,16 @@ async getPost  (req, res) {
 
         //res.status(201).json(newPostMessage );
     //} catch (error) {
-      // res.status(409).json({ message: error.message });
+       //res.status(409).json({ message: error.message });
     //}
 //},
 createPost(req, res ) {
     PostMessage.create(req.body).then((dbpostdata)=> {
-        res.json(dbpostdata)
-    })
+       res.json(dbpostdata)
+    }) .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
 },
 
 
